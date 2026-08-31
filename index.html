@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evento Acadêmico — Sistema de Gestão</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">§</span>
+    <div>
+      <h1>Sistema do Evento Acadêmico</h1>
+      <p>Inscrições, atividades, equipe e hospedagem</p>
+    </div>
+  </div>
+  <nav class="tabs" id="mainTabs">
+    <button class="tab active" data-tab="cadastro">Cadastro</button>
+    <button class="tab" data-tab="consulta">Consulta</button>
+    <button class="tab" data-tab="relatorios">Relatórios</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- =========================== CADASTRO =========================== -->
+<section id="cadastro" class="panel active">
+  <nav class="subtabs" data-group="cadastro">
+    <button class="subtab active" data-sub="c-pessoa">Pessoa</button>
+    <button class="subtab" data-sub="c-inscricao">Inscrição</button>
+    <button class="subtab" data-sub="c-organizacao">Equipe Organizadora</button>
+    <button class="subtab" data-sub="c-apoio">Equipe de Apoio</button>
+    <button class="subtab" data-sub="c-atividade">Atividade</button>
+    <button class="subtab" data-sub="c-ministrante">Ministrante</button>
+    <button class="subtab" data-sub="c-presenca">Presença</button>
+    <button class="subtab" data-sub="c-hotel">Hotel &amp; Alocação</button>
+  </nav>
+
+  <div id="c-pessoa" class="subpanel active">
+    <h2>Cadastro de Pessoa</h2>
+    <form id="form-pessoa" class="grid-form">
+      <label>CPF <input required name="cpf" placeholder="000.000.000-00"></label>
+      <label>Nome <input required name="nome"></label>
+      <label>Telefone <input name="telefone"></label>
+      <label>E-mail <input name="email" type="email"></label>
+      <label>Sexo
+        <select name="sexo"><option value="">—</option><option>F</option><option>M</option><option>Outro</option></select>
+      </label>
+      <label>Instituição de origem
+        <input name="instituicao_origem" list="lista-instituicoes" placeholder="digite para criar uma nova">
+        <datalist id="lista-instituicoes"></datalist>
+      </label>
+      <label>Vínculo com a instituição
+        <input name="vinculo" list="lista-vinculos" placeholder="ex: aluno, docente, servidor">
+        <datalist id="lista-vinculos"></datalist>
+      </label>
+      <button type="submit">Salvar pessoa</button>
+    </form>
+    <p class="hint">Instituição e vínculo são criados automaticamente se ainda não existirem.</p>
+    <div id="msg-pessoa" class="msg"></div>
+  </div>
+
+  <div id="c-inscricao" class="subpanel">
+    <h2>Inscrição no evento</h2>
+    <form id="form-inscricao" class="grid-form">
+      <label>CPF da pessoa <input required name="cpf" placeholder="pessoa já cadastrada"></label>
+      <label>Data da inscrição <input required type="date" name="data_inscricao"></label>
+      <label>Pagamento
+        <select name="pagamento_inscricao"><option value="Pendente">Pendente</option><option value="Pago">Pago</option></select>
+      </label>
+      <button type="submit">Registrar inscrição</button>
+    </form>
+    <div id="msg-inscricao" class="msg"></div>
+  </div>
+
+  <div id="c-organizacao" class="subpanel">
+    <h2>Equipe Organizadora</h2>
+    <form id="form-organizacao" class="grid-form">
+      <label>CPF da pessoa <input required name="cpf"></label>
+      <label>Data de ingresso <input required type="date" name="data_ingresso"></label>
+      <button type="submit">Adicionar à organização</button>
+    </form>
+    <div id="msg-organizacao" class="msg"></div>
+  </div>
+
+  <div id="c-apoio" class="subpanel">
+    <h2>Equipe de Apoio</h2>
+    <form id="form-apoio" class="grid-form">
+      <label>CPF da pessoa <input required name="cpf"></label>
+      <label>Data de ingresso <input required type="date" name="data_ingresso"></label>
+      <button type="submit">Adicionar ao apoio</button>
+    </form>
+    <div id="msg-apoio" class="msg"></div>
+  </div>
+
+  <div id="c-atividade" class="subpanel">
+    <h2>Cadastro de Atividade</h2>
+    <form id="form-atividade" class="grid-form">
+      <label>Tipo de atividade
+        <input required name="tipo" list="lista-tipos" placeholder="ex: palestra, minicurso">
+        <datalist id="lista-tipos"></datalist>
+      </label>
+      <label>Tem premiação? <select name="tem_premiacao"><option value="N">Não</option><option value="S">Sim</option></select></label>
+      <label>Nome da atividade <input required name="nome"></label>
+      <label>Dia <input required type="date" name="dia"></label>
+      <label>Hora <input required type="time" name="hora"></label>
+      <label>Vagas <input required type="number" min="1" name="vagas"></label>
+      <label class="full">Responsáveis pela organização (marque um ou mais)
+        <select multiple name="organizadores" id="select-organizadores" size="5"></select>
+      </label>
+      <label class="full">Equipe de apoio (marque um ou mais)
+        <select multiple name="apoio" id="select-apoio" size="5"></select>
+      </label>
+      <button type="submit">Salvar atividade</button>
+    </form>
+    <p class="hint">Segure Ctrl (ou Cmd no Mac) para marcar mais de uma pessoa.</p>
+    <div id="msg-atividade" class="msg"></div>
+  </div>
+
+  <div id="c-ministrante" class="subpanel">
+    <h2>Cadastro de Ministrante</h2>
+    <form id="form-ministrante" class="grid-form">
+      <label>CPF da pessoa <input required name="cpf"></label>
+      <label>Atividade
+        <select required name="id_atividade" id="select-atividade-ministrante"></select>
+      </label>
+      <button type="submit">Vincular ministrante</button>
+    </form>
+    <div id="msg-ministrante" class="msg"></div>
+  </div>
+
+  <div id="c-presenca" class="subpanel">
+    <h2>Registro de Presença em Atividade</h2>
+    <form id="form-presenca" class="grid-form">
+      <label>Atividade
+        <select required name="id_atividade" id="select-atividade-presenca"></select>
+      </label>
+      <label>CPF da pessoa <input required name="cpf"></label>
+      <button type="submit">Confirmar presença</button>
+    </form>
+    <div id="msg-presenca" class="msg"></div>
+  </div>
+
+  <div id="c-hotel" class="subpanel">
+    <h2>Hotel, Quartos e Alocação</h2>
+    <div class="split">
+      <form id="form-hotel" class="grid-form">
+        <h3>Novo hotel</h3>
+        <label>Nome <input required name="nome"></label>
+        <label>Endereço <input name="endereco"></label>
+        <label>Telefone <input name="telefone"></label>
+        <label>Nº de quartos <input type="number" min="1" name="numero_quartos"></label>
+        <label>Pessoas por quarto <input type="number" min="1" name="pessoas_por_quarto"></label>
+        <button type="submit">Salvar hotel</button>
+      </form>
+      <form id="form-quarto" class="grid-form">
+        <h3>Novo quarto</h3>
+        <label>Hotel <select required name="nome_hotel" id="select-hotel-quarto"></select></label>
+        <label>Número do quarto <input required name="quarto"></label>
+        <button type="submit">Adicionar quarto</button>
+      </form>
+      <form id="form-alocacao" class="grid-form">
+        <h3>Alocar pessoa em quarto</h3>
+        <label>CPF da pessoa <input required name="cpf"></label>
+        <label>Hotel <select required name="nome_hotel" id="select-hotel-alocacao"></select></label>
+        <label>Quarto <select required name="quarto" id="select-quarto-alocacao"></select></label>
+        <button type="submit">Alocar</button>
+      </form>
+    </div>
+    <div id="msg-hotel" class="msg"></div>
+  </div>
+</section>
+
+<!-- =========================== CONSULTA =========================== -->
+<section id="consulta" class="panel">
+  <nav class="subtabs" data-group="consulta">
+    <button class="subtab active" data-sub="q-pessoas">Pessoas / Inscritos</button>
+    <button class="subtab" data-sub="q-atividades">Atividades</button>
+    <button class="subtab" data-sub="q-alocacoes">Alocação em Hotéis</button>
+  </nav>
+
+  <div id="q-pessoas" class="subpanel active">
+    <h2>Consulta de Pessoas / Inscritos</h2>
+    <div class="searchbar">
+      <input id="busca-pessoa-cpf" placeholder="Filtrar por CPF">
+      <input id="busca-pessoa-nome" placeholder="Filtrar por nome">
+      <button id="btn-busca-pessoa">Buscar</button>
+    </div>
+    <div id="tabela-pessoas" class="table-wrap"></div>
+    <h3>Inscritos no evento</h3>
+    <div id="tabela-inscritos" class="table-wrap"></div>
+  </div>
+
+  <div id="q-atividades" class="subpanel">
+    <h2>Consulta de Atividades</h2>
+    <div class="searchbar">
+      <input id="busca-atividade-nome" placeholder="Filtrar por nome da atividade">
+      <button id="btn-busca-atividade">Buscar</button>
+    </div>
+    <div id="tabela-atividades" class="table-wrap"></div>
+  </div>
+
+  <div id="q-alocacoes" class="subpanel">
+    <h2>Consulta de Alocação em Hotéis</h2>
+    <div id="tabela-alocacoes" class="table-wrap"></div>
+  </div>
+</section>
+
+<!-- =========================== RELATORIOS =========================== -->
+<section id="relatorios" class="panel">
+  <nav class="subtabs" data-group="relatorios">
+    <button class="subtab active" data-sub="r-excedentes">Inscritos × Excedentes</button>
+    <button class="subtab" data-sub="r-equipe">Ministrantes × Apoio</button>
+    <button class="subtab" data-sub="r-presentes">Presentes Confirmados</button>
+    <button class="subtab" data-sub="r-certificados">Certificados</button>
+    <button class="subtab" data-sub="r-hotel">Hotel × Quartos × Pessoas</button>
+  </nav>
+
+  <div id="r-excedentes" class="subpanel active">
+    <h2>Atividades | Inscritos | Excedentes</h2>
+    <button class="btn-secondary" data-report="inscritos_excedentes">Gerar relatório</button>
+    <div id="out-excedentes" class="table-wrap"></div>
+  </div>
+
+  <div id="r-equipe" class="subpanel">
+    <h2>Atividades | Ministrantes | Equipe de Apoio</h2>
+    <button class="btn-secondary" data-report="ministrantes_apoio">Gerar relatório</button>
+    <div id="out-equipe" class="table-wrap"></div>
+  </div>
+
+  <div id="r-presentes" class="subpanel">
+    <h2>Atividades | Presentes Confirmados</h2>
+    <button class="btn-secondary" data-report="presentes_confirmados">Gerar relatório</button>
+    <div id="out-presentes" class="table-wrap"></div>
+  </div>
+
+  <div id="r-certificados" class="subpanel">
+    <h2>Certificados por Atividade / Inscrito</h2>
+    <button class="btn-secondary" data-report="certificados">Gerar certificados</button>
+    <div id="out-certificados" class="table-wrap"></div>
+  </div>
+
+  <div id="r-hotel" class="subpanel">
+    <h2>Hotel | Quartos | Pessoas | Instituição</h2>
+    <button class="btn-secondary" data-report="hotel_quartos">Gerar relatório</button>
+    <div id="out-hotel" class="table-wrap"></div>
+  </div>
+</section>
+
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>

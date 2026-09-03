@@ -1,7 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+<!-- CONEXÃO COM SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // =============================================
+  // 1. COLOQUE AQUI SUAS CREDENCIAIS DO SUPABASE
+  // =============================================
+  const SUPABASE_URL = 'https://seu-projeto.supabase.co';
+  const SUPABASE_KEY = 'sua-chave-anon-publica';
+  
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // =============================================
+  // 2. FUNÇÃO PARA SALVAR PESSOA
+  // =============================================
+  async function salvarPessoa() {
+    // Pegando os valores do formulário (AJUSTE OS IDs)
+    const cpf = document.getElementById('cpf')?.value || '';
+    const nome = document.getElementById('nome')?.value || '';
+    const telefone = document.getElementById('telefone')?.value || '';
+    const email = document.getElementById('email')?.value || '';
+    const sexo = document.getElementById('sexo')?.value || '';
+    const instituicao = document.getElementById('instituicao')?.value || '';
+    const vinculo = document.getElementById('vinculo')?.value || '';
+
+    // 1. Buscar ou criar instituição
+    let { data: inst, error: errInst } = await supabase
+      .from('instituicoes')
+      .select('id')
+      .eq('nome', instituicao)
+      .single();
+
+    if (errInst && errInst.code !== 'PGRST116') {
+      alert('Erro ao buscar instituição: ' + errInst.message);
+      return;
+    }
+
+    if (!inst) {
+      const { data: newInst, error: errCreate } = await supabase
+        .from('instituicoes')
+        .insert({ nome: instituicao })
+        .select()
+        .single();
+      if (errCreate) {
+        alert('Erro ao criar instituição: ' + errCreate.message);
+        return;
+      }
+      inst = newInst;
+    }
+
+    // 2. Inserir pessoa
+    const { error } = await supabase.from('pessoas').insert({
+      cpf,
+      nome,
+      telefone,
+      email,
+      sexo,
+      instituicao_id: inst.id,
+      vinculo
+    });
+
+    if (error) {
+      alert('Erro ao salvar: ' + error.message);
+    } else {
+      alert('✅ Pessoa salva com sucesso!');
+    }
+  }
+
+  // =============================================
+  // 3. FUNÇÃO PARA GERAR RELATÓRIO (TESTE)
+  // =============================================
+  async function gerarRelatorio() {
+    const { data, error } = await supabase
+      .from('pessoas')
+      .select('*');
+
+    if (error) {
+      alert('Erro no relatório: ' + error.message);
+      return;
+    }
+
+    // Mostra no console do navegador
+    console.table(data);
+    alert(Total de pessoas cadastradas: ${data.length});
+  }
+
+  // =============================================
+  // 4. (OPCIONAL) TESTE AUTOMÁTICO AO CARREGAR
+  // =============================================
+  console.log('✅ Script do Supabase carregado!');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Evento Acadêmico — Sistema de Gestão</title>

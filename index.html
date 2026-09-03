@@ -146,7 +146,7 @@
         <input name="vinculo" list="lista-vinculos" placeholder="ex: aluno, docente, servidor">
         <datalist id="lista-vinculos"></datalist>
       </label>
-      <button type="submit">Salvar pessoa</button>
+      <button type="button" onclick="salvarpessoa()">Salvar pessoa</button>
     </form>
     <p class="hint">Instituição e vínculo são criados automaticamente se ainda não existirem.</p>
     <div id="msg-pessoa" class="msg"></div>
@@ -160,7 +160,8 @@
       <label>Pagamento
         <select name="pagamento_inscricao"><option value="Pendente">Pendente</option><option value="Pago">Pago</option></select>
       </label>
-      <button type="submit">Registrar inscrição</button>
+      <button type="button" onclick="Registrarinscrição()">Registrar inscrição</button>
+  
     </form>
     <div id="msg-inscricao" class="msg"></div>
   </div>

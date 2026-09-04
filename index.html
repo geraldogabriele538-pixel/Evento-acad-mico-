@@ -257,6 +257,288 @@ function exibirTabelaAlocacoes(dados) {
   // 4. (OPCIONAL) TESTE AUTOMÁTICO AO CARREGAR
   // =============================================
   console.log('✅ Script do Supabase carregado!');
+  <!-- ============================================= -->
+<!-- 4. FUNÇÕES PARA GERAR RELATÓRIOS EM PDF        -->
+<!-- ============================================= -->
+
+<!-- 4.1 ADICIONAR BIBLIOTECA jsPDF no <head> -->
+<!-- Coloque esta linha dentro do <head> do seu HTML -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+// =============================================
+// 4.2 FUNÇÃO PRINCIPAL PARA GERAR PDF
+// =============================================
+
+async function gerarRelatorioPDF(tipoRelatorio) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('landscape', 'mm', 'a4');
+    
+    // Configurações do cabeçalho
+    const dataAtual = new Date().toLocaleDateString('pt-BR');
+    const horaAtual = new Date().toLocaleTimeString('pt-BR');
+    
+    // Cabeçalho do relatório
+    doc.setFontSize(18);
+    doc.setTextColor(40, 40, 100);
+    doc.text('SISTEMA DO EVENTO ACADÊMICO', 14, 20);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(80, 80, 80);
+    doc.text(`Relatório: ${tipoRelatorio}`, 14, 30);
+    doc.text(`Gerado em: ${dataAtual} às ${horaAtual}`, 14, 37);
+    
+    doc.setDrawColor(200, 200, 200);
+    doc.line(14, 42, 280, 42);
+    
+    let dados = [];
+    let tituloColunas = [];
+    let totalRegistros = 0;
+    
+    try {
+        // =============================================
+        // 4.3 BUSCAR DADOS CONFORME O TIPO DE RELATÓRIO
+        // =============================================
+        
+        switch(tipoRelatorio) {
+            case 'inscritos_excedentes': {
+                // Relatório 1: Inscritos × Excedentes
+                const { data: atividades, error: errAtiv } = await supabase
+                    .from('atividades')
+                    .select('titulo, tipo, vagas');
+                
+                if (errAtiv) throw errAtiv;
+                
+                // Buscar inscrições por atividade (simulação)
+                const { data: inscricoes, error: errInsc } = await supabase
+                    .from('inscricoes')
+                    .select('id_atividade');
+                
+                if (errInsc) throw errInsc;
+                
+                // Contar inscrições por atividade
+                const contagem = {};
+                inscricoes.forEach(ins => {
+                    contagem[ins.id_atividade] = (contagem[ins.id_atividade] || 0) + 1;
+                });
+                
+                dados = atividades.map(ativ => {
+                    const inscritos = contagem[ativ.id] || 0;
+                    const excedentes = Math.max(0, inscritos - (ativ.vagas || 0));
+                    return {
+                        'Atividade': ativ.titulo || '-',
+                        'Tipo': ativ.tipo || '-',
+                        'Vagas': ativ.vagas || 0,
+                        'Inscritos': inscritos,
+                        'Excedentes': excedentes
+                    };
+                });
+                
+                tituloColunas = ['Atividade', 'Tipo', 'Vagas', 'Inscritos', 'Excedentes'];
+                totalRegistros = dados.length;
+                break;
+            }
+            
+            case 'ministrantes_apoio': {
+                // Relatório 2: Ministrantes × Apoio
+                const { data: atividades, error: errAtiv } = await supabase
+                    .from('atividades')
+                    .select('titulo, tipo, organizadores, apoio');
+                
+                if (errAtiv) throw errAtiv;
+                
+                dados = atividades.map(ativ => ({
+                    'Atividade': ativ.titulo || '-',
+                    'Tipo': ativ.tipo || '-',
+                    'Ministrantes': ativ.organizadores || 'N/A',
+                    'Equipe Apoio': ativ.apoio || 'N/A'
+                }));
+                
+                tituloColunas = ['Atividade', 'Tipo', 'Ministrantes', 'Equipe Apoio'];
+                totalRegistros = dados.length;
+                break;
+            }
+            
+            case 'presentes_confirmados': {
+                // Relatório 3: Presentes Confirmados
+                const { data: presencas, error: errPres } = await supabase
+                    .from('presencas')
+                    .select('id_atividade, pessoas(nome, cpf)');
+                
+                if (errPres) throw errPres;
+                
+                // Buscar atividades para pegar os títulos
+                const { data: atividades, error: errAtiv } = await supabase
+                    .from('atividades')
+                    .select('id, titulo');
+                
+                if (errAtiv) throw errAtiv;
+                
+                const mapAtividades = {};
+                atividades.forEach(ativ => {
+                    mapAtividades[ativ.id] = ativ.titulo;
+                });
+                
+                dados = presencas.map(p => ({
+                    'Atividade': mapAtividades[p.id_atividade] || '-',
+                    'Nome': p.pessoas?.nome || '-',
+                    'CPF': p.pessoas?.cpf || '-',
+                    'Status': '✅ Presente'
+                }));
+                
+                tituloColunas = ['Atividade', 'Nome', 'CPF', 'Status'];
+                totalRegistros = dados.length;
+                break;
+            }
+            
+            case 'certificados': {
+                // Relatório 4: Certificados
+                const { data: inscricoes, error: errInsc } = await supabase
+                    .from('inscricoes')
+                    .select('pessoas(nome, cpf, email), data_inscricao');
+                
+                if (errInsc) throw errInsc;
+                
+                dados = inscricoes.map(ins => ({
+                    'Nome': ins.pessoas?.nome || '-',
+                    'CPF': ins.pessoas?.cpf || '-',
+                    'Email': ins.pessoas?.email || '-',
+                    'Data Inscrição': ins.data_inscricao || '-',
+                    'Certificado': '📜 Disponível'
+                }));
+                
+                tituloColunas = ['Nome', 'CPF', 'Email', 'Data Inscrição', 'Certificado'];
+                totalRegistros = dados.length;
+                break;
+            }
+            
+            case 'hotel_quartos': {
+                // Relatório 5: Hotel × Quartos × Pessoas
+                const { data: alocacoes, error: errAloc } = await supabase
+                    .from('alocacoes')
+                    .select('pessoas(nome, cpf, instituicao_id), hoteis(nome), quartos(numero)');
+                
+                if (errAloc) throw errAloc;
+                
+                dados = alocacoes.map(a => ({
+                    'Pessoa': a.pessoas?.nome || '-',
+                    'CPF': a.pessoas?.cpf || '-',
+                    'Hotel': a.hoteis?.nome || '-',
+                    'Quarto': a.quartos?.numero || '-',
+                    'Instituição': a.pessoas?.instituicao_id || 'N/I'
+                }));
+                
+                tituloColunas = ['Pessoa', 'CPF', 'Hotel', 'Quarto', 'Instituição'];
+                totalRegistros = dados.length;
+                break;
+            }
+            
+            default:
+                alert('Tipo de relatório não reconhecido!');
+                return;
+        }
+        
+        // =============================================
+        // 4.4 GERAR TABELA NO PDF
+        // =============================================
+        
+        if (dados.length === 0) {
+            doc.setFontSize(14);
+            doc.setTextColor(200, 0, 0);
+            doc.text('⚠️ Nenhum dado encontrado para este relatório.', 14, 60);
+        } else {
+            // Converter dados para array de arrays
+            const rows = dados.map(item => tituloColunas.map(col => String(item[col] || '-')));
+            
+            doc.autoTable({
+                startY: 48,
+                head: [tituloColunas],
+                body: rows,
+                theme: 'striped',
+                headStyles: {
+                    fillColor: [40, 40, 100],
+                    textColor: [255, 255, 255],
+                    fontSize: 10,
+                    halign: 'center'
+                },
+                bodyStyles: {
+                    fontSize: 9,
+                    cellPadding: 2
+                },
+                columnStyles: {
+                    0: { cellWidth: 50 },
+                    1: { cellWidth: 35 },
+                    2: { cellWidth: 30 },
+                    3: { cellWidth: 30 },
+                    4: { cellWidth: 35 }
+                },
+                didDrawPage: function(data) {
+                    // Rodapé
+                    const pageCount = doc.internal.getNumberOfPages();
+                    doc.setFontSize(8);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text(
+                        `Página ${data.pageNumber} de ${pageCount} | Total de registros: ${totalRegistros}`,
+                        14,
+                        doc.internal.pageSize.height - 10
+                    );
+                }
+            });
+        }
+        
+        // =============================================
+        // 4.5 BAIXAR O PDF
+        // =============================================
+        
+        // Salvar com nome descritivo
+        const nomeArquivo = `relatorio_${tipoRelatorio}_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(nomeArquivo);
+        
+    } catch (error) {
+        console.error('Erro ao gerar relatório:', error);
+        alert(`❌ Erro ao gerar relatório: ${error.message}`);
+    }
+}
+
+// =============================================
+// 4.6 CONFIGURAR BOTÕES DE RELATÓRIO
+// =============================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Mapear botões de relatório
+    const botoesRelatorio = document.querySelectorAll('[data-report]');
+    
+    botoesRelatorio.forEach(botao => {
+        botao.addEventListener('click', function() {
+            const tipo = this.getAttribute('data-report');
+            
+            // Mapear tipos para nomes amigáveis
+            const nomesRelatorios = {
+                'inscritos_excedentes': 'Inscritos × Excedentes',
+                'ministrantes_apoio': 'Ministrantes × Apoio',
+                'presentes_confirmados': 'Presentes Confirmados',
+                'certificados': 'Certificados por Atividade',
+                'hotel_quartos': 'Hotel × Quartos × Pessoas'
+            };
+            
+            const nomeRelatorio = nomesRelatorios[tipo] || tipo;
+            
+            // Confirmar antes de gerar
+            if (confirm(`📄 Gerar relatório "${nomeRelatorio}" em PDF?`)) {
+                gerarRelatorioPDF(tipo);
+            }
+        });
+    });
+    
+    // =============================================
+    // 4.7 TESTE AUTOMÁTICO (opcional)
+    // =============================================
+    console.log('✅ Sistema de relatórios em PDF carregado!');
+    console.log('📄 Clique em qualquer botão "Gerar relatório" para gerar o PDF.');
+});
+
+</script>
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

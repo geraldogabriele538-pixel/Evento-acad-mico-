@@ -805,5 +805,586 @@ document.addEventListener('DOMContentLoaded', function() {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 </head>
+  <!-- ============================================= -->
+<!-- SCRIPT PARA POPULAR BANCO COM DADOS FICTÍCIOS  -->
+<!-- ============================================= -->
+<script>
+// =============================================
+// 1. DADOS FICTÍCIOS PARA CADA ENTIDADE
+// =============================================
+
+// 1.1 Lista de Nomes (20)
+const NOMES = [
+    'Ana Carolina Silva', 'João Pedro Santos', 'Maria Eduarda Oliveira', 
+    'Carlos André Lima', 'Fernanda Cristina Rocha', 'Ricardo José Almeida',
+    'Patrícia Helena Souza', 'André Luiz Ferreira', 'Camila Beatriz Costa',
+    'Roberto Fernando Gomes', 'Juliana Aparecida Martins', 'Marcos Vinícius Pereira',
+    'Larissa Fernandes Alves', 'Gustavo Henrique Ribeiro', 'Beatriz Rodrigues Nunes',
+    'Felipe Augusto Carvalho', 'Renata Oliveira Lima', 'Thiago Souza Mendes',
+    'Vanessa Cristina Silva', 'Rafael Almeida Santos'
+];
+
+// 1.2 Lista de CPFs (20)
+const CPFS = [
+    '12345678901', '98765432100', '11122233344', '55566677788', '99988877766',
+    '44455566677', '22233344455', '77788899900', '33344455566', '88899900011',
+    '12398745600', '45612378900', '78945612300', '32165498700', '65478932100',
+    '98732165400', '15935725800', '75395145600', '85245678900', '36925814700'
+];
+
+// 1.3 Lista de Telefones (20)
+const TELEFONES = [
+    '(11) 91234-5678', '(21) 98765-4321', '(31) 99876-5432', '(41) 91234-8765',
+    '(51) 98765-1234', '(61) 99876-2345', '(71) 91234-9876', '(81) 98765-5432',
+    '(91) 99876-6543', '(85) 91234-4321', '(12) 98765-4321', '(13) 99876-5432',
+    '(14) 91234-8765', '(15) 98765-1234', '(16) 99876-2345', '(17) 91234-9876',
+    '(18) 98765-5432', '(19) 99876-6543', '(27) 91234-4321', '(28) 98765-1234'
+];
+
+// 1.4 Lista de Emails (20)
+const EMAILS = [
+    'ana.silva@email.com', 'joao.santos@empresa.com.br', 'maria.oliveira@universidade.edu',
+    'carlos.lima@provedor.com', 'fernanda.rocha@org.gov', 'ricardo.almeida@consultoria.com',
+    'patricia.souza@negocios.net', 'andre.ferreira@tecnologia.com', 'camila.costa@saude.org',
+    'roberto.gomes@financeiro.com', 'juliana.martins@pesquisa.br', 'marcos.pereira@inovacao.com',
+    'larissa.alves@cultura.org', 'gustavo.ribeiro@engenharia.com', 'beatriz.nunes@educacao.edu',
+    'felipe.carvalho@administracao.com', 'renata.lima@marketing.com', 'thiago.mendes@logistica.com',
+    'vanessa.silva@rh.com', 'rafael.santos@comercial.com'
+];
+
+// 1.5 Lista de Sexo (20 - alternado)
+const SEXO = ['F', 'M', 'F', 'M', 'F', 'M', 'F', 'M', 'F', 'M', 'F', 'M', 'F', 'M', 'F', 'M', 'F', 'M', 'F', 'M'];
+
+// 1.6 Lista de Instituições (20)
+const INSTITUICOES = [
+    'Universidade de São Paulo', 'Pontifícia Universidade Católica', 
+    'Instituto Tecnológico de Aeronáutica', 'Universidade Estadual de Campinas',
+    'Fundação Getúlio Vargas', 'Escola Politécnica da USP', 
+    'Centro Federal de Educação', 'Universidade Federal do Rio',
+    'Instituto Nacional de Pesquisas', 'Universidade do Estado do Rio',
+    'Universidade Federal de Minas Gerais', 'Universidade de Brasília',
+    'Universidade Federal do Paraná', 'Universidade de Santa Catarina',
+    'Universidade Federal do Ceará', 'Universidade de Pernambuco',
+    'Universidade Federal da Bahia', 'Universidade de São Carlos',
+    'Instituto de Pesquisa Econômica', 'Centro Universitário FEI'
+];
+
+// 1.7 Lista de Vínculos (20)
+const VINCULOS = [
+    'Professor', 'Aluno Graduação', 'Aluno Pós-Graduação', 'Pesquisador',
+    'Coordenador', 'Técnico Administrativo', 'Bolsista', 'Estagiário',
+    'Colaborador Externo', 'Professor Visitante', 'Monitor', 'Orientador',
+    'Supervisor', 'Analista', 'Consultor', 'Palestrante',
+    'Membro Comitê', 'Voluntário', 'Avaliador', 'Assistente'
+];
+
+// 1.8 Lista de Tipos de Atividade (10)
+const TIPOS_ATIVIDADE = [
+    'Palestra', 'Minicurso', 'Workshop', 'Seminário', 'Mesa Redonda',
+    'Painel', 'Oficina', 'Fórum', 'Simpósio', 'Hackathon'
+];
+
+// 1.9 Lista de Títulos de Atividade (20)
+const TITULOS_ATIVIDADE = [
+    'Inteligência Artificial na Educação', 'Metodologias Ativas de Aprendizagem',
+    'Gestão de Projetos Acadêmicos', 'Inovação e Empreendedorismo',
+    'Sustentabilidade e Meio Ambiente', 'Tecnologia e Sociedade',
+    'Neurociência e Comportamento', 'Marketing Digital para Acadêmicos',
+    'Finanças Pessoais e Investimentos', 'Desenvolvimento de Software',
+    'Segurança da Informação', 'Inteligência de Negócios',
+    'Design Thinking e Criatividade', 'Liderança e Gestão de Equipes',
+    'Ética e Responsabilidade Social', 'Comunicação e Oratória',
+    'Machine Learning e Data Science', 'Blockchain e Criptomoedas',
+    'Saúde Mental e Bem-estar', 'Carreiras e Networking'
+];
+
+// 1.10 Lista de Hotéis (10)
+const HOTEIS = [
+    'Hotel Central Palace', 'Resort Costa do Sol', 'Hotel Imperial Garden',
+    'Grand Plaza Hotel', 'Hotel das Montanhas', 'Beach Resort',
+    'Hotel Golden Tower', 'Executive Suites', 'Hotel Colonial',
+    'Village Park Hotel'
+];
+
+// 1.11 Lista de Endereços de Hotéis
+const ENDERECOS_HOTEIS = [
+    'Av. Paulista, 1000', 'Rua das Flores, 200', 'Praça da Sé, 50',
+    'Av. Atlântica, 500', 'Estrada das Montanhas, 15', 'Orla Marítima, 800',
+    'Rua do Comércio, 300', 'Av. dos Bandeirantes, 400', 'Rua das Palmeiras, 75',
+    'Alameda Santos, 250'
+];
+
+// 1.12 Lista de Telefones de Hotéis
+const TELEFONES_HOTEIS = [
+    '(11) 3234-5678', '(21) 2525-4321', '(31) 3333-5432', '(41) 4444-8765',
+    '(51) 5555-1234', '(61) 6666-2345', '(71) 7777-9876', '(81) 8888-5432',
+    '(91) 9999-6543', '(85) 8585-4321'
+];
+
+// 1.13 Status de Pagamento
+const STATUS_PAGAMENTO = ['Pendente', 'Pago', 'Pago', 'Pendente', 'Pago']; // Mais pagos que pendentes
+
+// =============================================
+// 2. FUNÇÕES PARA INSERIR DADOS
+// =============================================
+
+// 2.1 Função para gerar data aleatória (últimos 30 dias)
+function dataAleatoria() {
+    const hoje = new Date();
+    const diasAtras = Math.floor(Math.random() * 30);
+    hoje.setDate(hoje.getDate() - diasAtras);
+    return hoje.toISOString().split('T')[0];
+}
+
+// 2.2 Função para gerar hora aleatória (8h às 18h)
+function horaAleatoria() {
+    const hora = Math.floor(Math.random() * 10) + 8;
+    const minuto = Math.floor(Math.random() * 60);
+    return `${String(hora).padStart(2, '0')}:${String(minuto).padStart(2, '0')}`;
+}
+
+// 2.3 Função para gerar números de quartos
+function numeroQuarto() {
+    return Math.floor(Math.random() * 100) + 100;
+}
+
+// 2.4 Função para gerar vagas (10 a 50)
+function vagasAleatorias() {
+    return Math.floor(Math.random() * 40) + 10;
+}
+
+// 2.5 Função para embaralhar array (Fisher-Yates)
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// =============================================
+// 3. FUNÇÃO PRINCIPAL PARA POPULAR O BANCO
+// =============================================
+
+async function popularBancoDados() {
+    console.log('🚀 Iniciando população do banco de dados...');
+    let contador = 0;
+    let totalErros = 0;
+    
+    try {
+        // =============================================
+        // 3.1 INSERIR PESSOAS (20)
+        // =============================================
+        console.log('📝 Inserindo 20 pessoas...');
+        
+        for (let i = 0; i < 20; i++) {
+            try {
+                const { error } = await supabase.from('pessoas').insert({
+                    cpf: CPFS[i],
+                    nome: NOMES[i],
+                    telefone: TELEFONES[i],
+                    email: EMAILS[i],
+                    sexo: SEXO[i],
+                    instituicao: INSTITUICOES[i],
+                    vinculo: VINCULOS[i]
+                });
+                
+                if (error) {
+                    console.warn(`⚠️ Erro ao inserir pessoa ${i+1}:`, error.message);
+                    totalErros++;
+                } else {
+                    contador++;
+                    console.log(`✅ Pessoa ${i+1}/20 inserida: ${NOMES[i]}`);
+                }
+            } catch (err) {
+                console.warn(`⚠️ Exceção ao inserir pessoa ${i+1}:`, err.message);
+                totalErros++;
+            }
+        }
+        
+        // =============================================
+        // 3.2 INSERIR ATIVIDADES (20)
+        // =============================================
+        console.log('📝 Inserindo 20 atividades...');
+        
+        for (let i = 0; i < 20; i++) {
+            try {
+                const tipo = TIPOS_ATIVIDADE[i % TIPOS_ATIVIDADE.length];
+                const temPremiacao = (i % 2 === 0) ? 'S' : 'N';
+                
+                const { error } = await supabase.from('atividades').insert({
+                    codigo: `ATV${String(i+1).padStart(3, '0')}`,
+                    titulo: TITULOS_ATIVIDADE[i],
+                    tipo: tipo,
+                    dia: dataAleatoria(),
+                    hora: horaAleatoria(),
+                    vagas: vagasAleatorias(),
+                    tem_premiacao: temPremiacao
+                });
+                
+                if (error) {
+                    console.warn(`⚠️ Erro ao inserir atividade ${i+1}:`, error.message);
+                    totalErros++;
+                } else {
+                    contador++;
+                    console.log(`✅ Atividade ${i+1}/20 inserida: ${TITULOS_ATIVIDADE[i]}`);
+                }
+            } catch (err) {
+                console.warn(`⚠️ Exceção ao inserir atividade ${i+1}:`, err.message);
+                totalErros++;
+            }
+        }
+        
+        // =============================================
+        // 3.3 INSERIR INSCRIÇÕES (20)
+        // =============================================
+        console.log('📝 Inserindo 20 inscrições...');
+        
+        // Buscar pessoas e atividades para relacionar
+        const { data: pessoas, error: errPessoas } = await supabase
+            .from('pessoas')
+            .select('cpf');
+        
+        const { data: atividades, error: errAtividades } = await supabase
+            .from('atividades')
+            .select('id');
+        
+        if (errPessoas || errAtividades) {
+            console.warn('⚠️ Não foi possível buscar pessoas/atividades para inscrições');
+        } else {
+            const cpfs = pessoas.map(p => p.cpf);
+            const idsAtividades = atividades.map(a => a.id);
+            
+            for (let i = 0; i < Math.min(20, cpfs.length, idsAtividades.length); i++) {
+                try {
+                    const pagamento = STATUS_PAGAMENTO[i % STATUS_PAGAMENTO.length];
+                    const { error } = await supabase.from('inscricoes').insert({
+                        cpf: cpfs[i % cpfs.length],
+                        id_atividade: idsAtividades[i % idsAtividades.length],
+                        data_inscricao: dataAleatoria(),
+                        pagamento: pagamento
+                    });
+                    
+                    if (error) {
+                        console.warn(`⚠️ Erro ao inserir inscrição ${i+1}:`, error.message);
+                        totalErros++;
+                    } else {
+                        contador++;
+                        console.log(`✅ Inscrição ${i+1}/20 inserida (CPF: ${cpfs[i % cpfs.length]})`);
+                    }
+                } catch (err) {
+                    console.warn(`⚠️ Exceção ao inserir inscrição ${i+1}:`, err.message);
+                    totalErros++;
+                }
+            }
+        }
+        
+        // =============================================
+        // 3.4 INSERIR PRESENÇAS (20)
+        // =============================================
+        console.log('📝 Inserindo 20 presenças...');
+        
+        const { data: presencasPessoas } = await supabase
+            .from('pessoas')
+            .select('cpf')
+            .limit(10);
+        
+        const { data: presencasAtividades } = await supabase
+            .from('atividades')
+            .select('id')
+            .limit(10);
+        
+        if (presencasPessoas && presencasAtividades) {
+            for (let i = 0; i < Math.min(20, presencasPessoas.length, presencasAtividades.length); i++) {
+                try {
+                    const cpf = presencasPessoas[i % presencasPessoas.length].cpf;
+                    const idAtividade = presencasAtividades[i % presencasAtividades.length].id;
+                    
+                    const { error } = await supabase.from('presencas').insert({
+                        cpf: cpf,
+                        id_atividade: idAtividade,
+                        data_hora: new Date().toISOString()
+                    });
+                    
+                    if (error) {
+                        console.warn(`⚠️ Erro ao inserir presença ${i+1}:`, error.message);
+                        totalErros++;
+                    } else {
+                        contador++;
+                        console.log(`✅ Presença ${i+1}/20 inserida (CPF: ${cpf})`);
+                    }
+                } catch (err) {
+                    console.warn(`⚠️ Exceção ao inserir presença ${i+1}:`, err.message);
+                    totalErros++;
+                }
+            }
+        }
+        
+        // =============================================
+        // 3.5 INSERIR HOTÉIS (10)
+        // =============================================
+        console.log('📝 Inserindo 10 hotéis...');
+        
+        for (let i = 0; i < 10; i++) {
+            try {
+                const numQuartos = Math.floor(Math.random() * 20) + 10;
+                const pessoasPorQuarto = Math.floor(Math.random() * 3) + 1;
+                
+                const { error } = await supabase.from('hoteis').insert({
+                    nome: HOTEIS[i],
+                    endereco: ENDERECOS_HOTEIS[i],
+                    telefone: TELEFONES_HOTEIS[i],
+                    numero_quartos: numQuartos,
+                    pessoas_por_quarto: pessoasPorQuarto
+                });
+                
+                if (error) {
+                    console.warn(`⚠️ Erro ao inserir hotel ${i+1}:`, error.message);
+                    totalErros++;
+                } else {
+                    contador++;
+                    console.log(`✅ Hotel ${i+1}/10 inserido: ${HOTEIS[i]}`);
+                }
+            } catch (err) {
+                console.warn(`⚠️ Exceção ao inserir hotel ${i+1}:`, err.message);
+                totalErros++;
+            }
+        }
+        
+        // =============================================
+        // 3.6 INSERIR QUARTOS (20)
+        // =============================================
+        console.log('📝 Inserindo 20 quartos...');
+        
+        const { data: hoteis, error: errHoteis } = await supabase
+            .from('hoteis')
+            .select('id, nome');
+        
+        if (errHoteis) {
+            console.warn('⚠️ Não foi possível buscar hotéis para os quartos');
+        } else if (hoteis && hoteis.length > 0) {
+            for (let i = 0; i < 20; i++) {
+                try {
+                    const hotel = hoteis[i % hoteis.length];
+                    const { error } = await supabase.from('quartos').insert({
+                        id_hotel: hotel.id,
+                        numero: numeroQuarto()
+                    });
+                    
+                    if (error) {
+                        console.warn(`⚠️ Erro ao inserir quarto ${i+1}:`, error.message);
+                        totalErros++;
+                    } else {
+                        contador++;
+                        console.log(`✅ Quarto ${i+1}/20 inserido no hotel: ${hotel.nome}`);
+                    }
+                } catch (err) {
+                    console.warn(`⚠️ Exceção ao inserir quarto ${i+1}:`, err.message);
+                    totalErros++;
+                }
+            }
+        }
+        
+        // =============================================
+        // 3.7 INSERIR ALOCAÇÕES (20)
+        // =============================================
+        console.log('📝 Inserindo 20 alocações...');
+        
+        const { data: alocPessoas } = await supabase
+            .from('pessoas')
+            .select('cpf')
+            .limit(10);
+        
+        const { data: alocHoteis } = await supabase
+            .from('hoteis')
+            .select('id')
+            .limit(10);
+        
+        const { data: alocQuartos } = await supabase
+            .from('quartos')
+            .select('id, id_hotel')
+            .limit(10);
+        
+        if (alocPessoas && alocHoteis && alocQuartos) {
+            for (let i = 0; i < 20; i++) {
+                try {
+                    const pessoa = alocPessoas[i % alocPessoas.length];
+                    const hotel = alocHoteis[i % alocHoteis.length];
+                    const quarto = alocQuartos[i % alocQuartos.length];
+                    
+                    // Verificar se quarto pertence ao hotel
+                    if (quarto.id_hotel === hotel.id) {
+                        const { error } = await supabase.from('alocacoes').insert({
+                            pessoa_id: pessoa.cpf,
+                            hotel_id: hotel.id,
+                            quarto_id: quarto.id,
+                            data_alocacao: dataAleatoria()
+                        });
+                        
+                        if (error) {
+                            console.warn(`⚠️ Erro ao inserir alocação ${i+1}:`, error.message);
+                            totalErros++;
+                        } else {
+                            contador++;
+                            console.log(`✅ Alocação ${i+1}/20 inserida (Pessoa: ${pessoa.cpf})`);
+                        }
+                    }
+                } catch (err) {
+                    console.warn(`⚠️ Exceção ao inserir alocação ${i+1}:`, err.message);
+                    totalErros++;
+                }
+            }
+        }
+        
+        // =============================================
+        // 3.8 INSERIR ORGANIZADORES (10)
+        // =============================================
+        console.log('📝 Inserindo 10 organizadores...');
+        
+        const { data: orgPessoas } = await supabase
+            .from('pessoas')
+            .select('cpf')
+            .limit(10);
+        
+        const { data: orgAtividades } = await supabase
+            .from('atividades')
+            .select('id')
+            .limit(10);
+        
+        if (orgPessoas && orgAtividades) {
+            for (let i = 0; i < 10; i++) {
+                try {
+                    const { error } = await supabase.from('organizadores').insert({
+                        pessoa_cpf: orgPessoas[i].cpf,
+                        atividade_id: orgAtividades[i % orgAtividades.length].id
+                    });
+                    
+                    if (error) {
+                        console.warn(`⚠️ Erro ao inserir organizador ${i+1}:`, error.message);
+                        totalErros++;
+                    } else {
+                        contador++;
+                        console.log(`✅ Organizador ${i+1}/10 inserido`);
+                    }
+                } catch (err) {
+                    console.warn(`⚠️ Exceção ao inserir organizador ${i+1}:`, err.message);
+                    totalErros++;
+                }
+            }
+        }
+        
+        // =============================================
+        // 3.9 INSERIR EQUIPE DE APOIO (10)
+        // =============================================
+        console.log('📝 Inserindo 10 equipe de apoio...');
+        
+        const { data: apPessoas } = await supabase
+            .from('pessoas')
+            .select('cpf')
+            .limit(10);
+        
+        const { data: apAtividades } = await supabase
+            .from('atividades')
+            .select('id')
+            .limit(10);
+        
+        if (apPessoas && apAtividades) {
+            for (let i = 0; i < 10; i++) {
+                try {
+                    const { error } = await supabase.from('apoio').insert({
+                        pessoa_cpf: apPessoas[i].cpf,
+                        atividade_id: apAtividades[i % apAtividades.length].id
+                    });
+                    
+                    if (error) {
+                        console.warn(`⚠️ Erro ao inserir apoio ${i+1}:`, error.message);
+                        totalErros++;
+                    } else {
+                        contador++;
+                        console.log(`✅ Apoio ${i+1}/10 inserido`);
+                    }
+                } catch (err) {
+                    console.warn(`⚠️ Exceção ao inserir apoio ${i+1}:`, err.message);
+                    totalErros++;
+                }
+            }
+        }
+        
+        // =============================================
+        // 4. RESUMO FINAL
+        // =============================================
+        console.log('✅ ==========================================');
+        console.log(`✅ POPULAÇÃO CONCLUÍDA!`);
+        console.log(`✅ Total de registros inseridos: ${contador}`);
+        console.log(`⚠️ Total de erros: ${totalErros}`);
+        console.log('✅ ==========================================');
+        
+        alert(`🎉 Dados inseridos com sucesso!\n\n📊 Total de registros: ${contador}\n⚠️ Erros: ${totalErros}\n\nAtualize a página para ver os dados.`);
+        
+        // Recarregar dados automaticamente
+        setTimeout(() => {
+            location.reload();
+        }, 3000);
+        
+    } catch (error) {
+        console.error('❌ Erro fatal ao popular banco:', error);
+        alert(`❌ Erro ao popular banco: ${error.message}`);
+    }
+}
+
+// =============================================
+// 5. BOTÃO PARA POPULAR O BANCO
+// =============================================
+
+// Adicionar botão flutuante na interface
+document.addEventListener('DOMContentLoaded', function() {
+    // Criar botão
+    const btnPopulate = document.createElement('button');
+    btnPopulate.id = 'btn-popular-dados';
+    btnPopulate.textContent = '📊 Popular Banco com Dados Fictícios';
+    btnPopulate.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 15px 25px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 9999;
+        transition: all 0.3s ease;
+    `;
+    
+    btnPopulate.onmouseover = function() {
+        this.style.transform = 'scale(1.05)';
+        this.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4)';
+    };
+    
+    btnPopulate.onmouseout = function() {
+        this.style.transform = 'scale(1)';
+        this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+    };
+    
+    btnPopulate.onclick = function() {
+        if (confirm('⚠️ Isso irá inserir 20 registros em cada entidade!\n\nDeseja continuar?')) {
+            this.textContent = '⏳ Inserindo dados...';
+            this.disabled = true;
+            popularBancoDados().finally(() => {
+                this.textContent = '📊 Popular Banco com Dados Fictícios';
+                this.disabled = false;
+            });
+        }
+    };
+    
+    document.body.appendChild(btnPopulate);
+    
+    console.log('✅ Botão "Popular Banco" adicionado!');
+    console.log('📊 Clique no botão flutuante no canto inferior direito.');
+});
+</script>
 </body>
 </html>

@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+  <head>
+    <!-- ... suas outras bibliotecas ... -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+  <!DOCTYPE html>
+<html lang="pt-br">
+
 <!-- CONEXÃO COM SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -801,6 +809,110 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script src="/app.js"></script>
   <head>
+    <head>
+    <!-- CONEXÃO COM SUPABASE (já existe) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- ========================================== -->
+    <!-- ⭐ NOVO: Adicione as bibliotecas jsPDF AQUI -->
+    <!-- ========================================== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <!-- ========================================== -->
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evento Acadêmico — Sistema de Gestão</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+  <!-- ========================================== -->
+<!-- ⭐ COLE A FUNÇÃO DO PDF AQUI (antes do </body>) -->
+<!-- ========================================== -->
+<script>
+// =============================================
+// FUNÇÃO PARA GERAR RELATÓRIOS EM PDF
+// =============================================
+
+async function gerarRelatorioPDF(tipoRelatorio) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('landscape', 'mm', 'a4');
+    
+    // ... TODO O CÓDIGO COMPLETO QUE TE PASSEI ...
+}
+
+// Configurar os botões
+document.addEventListener('DOMContentLoaded', function() {
+    const botoesRelatorio = document.querySelectorAll('[data-report]');
+    botoesRelatorio.forEach(botao => {
+        botao.addEventListener('click', function() {
+            const tipo = this.getAttribute('data-report');
+            gerarRelatorioPDF(tipo);
+        });
+    });
+});
+</script>
+
+</body>
+</html>
+  <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- 1. Meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evento Acadêmico — Sistema de Gestão</title>
+    <link rel="stylesheet" href="/style.css">
+    
+    <!-- 2. Conexão com Supabase (já existia) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 3. ⭐ BIBLIOTECAS jsPDF (NOVO) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<!-- ========================================== -->
+<!-- SEU HTML COMPLETO (já existente)           -->
+<!-- ========================================== -->
+<header class="topbar">...</header>
+<main>...</main>
+
+<!-- ========================================== -->
+<!-- ⭐ 4. SCRIPTS (ANTES DO </body>)            -->
+<!-- ========================================== -->
+
+<!-- Script do Supabase (já existia) -->
+<script>
+    const SUPABASE_URL = '...';
+    const SUPABASE_KEY = '...';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    // Funções já existentes (salvarPessoa, buscarPessoas, etc.)
+</script>
+
+<!-- ⭐ Script do PDF (NOVO) -->
+<script>
+    async function gerarRelatorioPDF(tipoRelatorio) {
+        // CÓDIGO COMPLETO DA FUNÇÃO
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar botões
+    });
+</script>
+
+<!-- ⭐ Script de Dados Fictícios (NOVO) -->
+<script>
+    const NOMES = ['Ana Carolina Silva', ...];
+    // TODO O CÓDIGO DE POPULAÇÃO
+</script>
+
+<!-- app.js (já existia) -->
+<script src="/app.js"></script>
+
+</body>
+</html>
     <!-- ... seus outros scripts ... -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -1384,6 +1496,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('✅ Botão "Popular Banco" adicionado!');
     console.log('📊 Clique no botão flutuante no canto inferior direito.');
+  
 });
 </script>
 </body>

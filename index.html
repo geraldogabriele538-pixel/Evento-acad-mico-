@@ -85,7 +85,174 @@
     console.table(data);
     alert(Total de pessoas cadastradas: ${data.length});
   }
+// =============================================
+// 3.5 FUNÇÕES PARA CONSULTAR DADOS (BUSCAR)
+// =============================================
 
+// Buscar pessoas (com filtro)
+async function buscarPessoas() {
+  const cpf = document.getElementById('busca-pessoa-cpf')?.value || '';
+  const nome = document.getElementById('busca-pessoa-nome')?.value || '';
+
+  let query = supabase.from('pessoas').select('*');
+
+  if (cpf) {
+    query = query.ilike('cpf', %${cpf}%);
+  }
+  if (nome) {
+    query = query.ilike('nome', %${nome}%);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    alert('Erro ao buscar pessoas: ' + error.message);
+    return;
+  }
+
+  exibirTabelaPessoas(data);
+}
+
+// Buscar inscritos
+async function buscarInscritos() {
+  const { data, error } = await supabase
+    .from('inscricoes')
+    .select(
+      id,
+      data_inscricao,
+      pagamento,
+      pessoas (nome, cpf, email)
+    );
+
+  if (error) {
+    alert('Erro ao buscar inscritos: ' + error.message);
+    return;
+  }
+
+  exibirTabelaInscritos(data);
+}
+
+// Buscar atividades (com filtro)
+async function buscarAtividades() {
+  const nome = document.getElementById('busca-atividade-nome')?.value || '';
+
+  let query = supabase.from('atividades').select('*');
+  
+  if (nome) {
+    query = query.ilike('titulo', %${nome}%);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    alert('Erro ao buscar atividades: ' + error.message);
+    return;
+  }
+
+  exibirTabelaAtividades(data);
+}
+
+// Buscar alocações em hotéis
+async function buscarAlocacoes() {
+  const { data, error } = await supabase
+    .from('alocacoes')
+    .select(
+      pessoa_id,
+      hotel_id,
+      quarto_id,
+      pessoas (nome, cpf),
+      hoteis (nome),
+      quartos (numero)
+    );
+
+  if (error) {
+    alert('Erro ao buscar alocações: ' + error.message);
+    return;
+  }
+
+  exibirTabelaAlocacoes(data);
+}
+  // =============================================
+// FUNÇÕES PARA EXIBIR TABELAS
+// =============================================
+
+function exibirTabelaPessoas(dados) {
+  if (!dados || dados.length === 0) {
+    document.getElementById('tabela-pessoas').innerHTML = '<p>Nenhuma pessoa encontrada.</p>';
+    return;
+  }
+
+  let html = '<table><tr><th>CPF</th><th>Nome</th><th>Email</th><th>Telefone</th><th>Vínculo</th></tr>';
+  dados.forEach(p => {
+    html += <tr>
+      <td>${p.cpf || '-'}</td>
+      <td>${p.nome || '-'}</td>
+      <td>${p.email || '-'}</td>
+      <td>${p.telefone || '-'}</td>
+      <td>${p.vinculo || '-'}</td>
+    </tr>;
+  });
+  html += '</table>';
+  document.getElementById('tabela-pessoas').innerHTML = html;
+}
+
+function exibirTabelaInscritos(dados) {
+  if (!dados || dados.length === 0) {
+    document.getElementById('tabela-inscritos').innerHTML = '<p>Nenhum inscrito encontrado.</p>';
+    return;
+  }
+
+  let html = '<table><tr><th>Nome</th><th>CPF</th><th>Email</th><th>Data Inscrição</th><th>Pagamento</th></tr>';
+  dados.forEach(i => {
+    html += <tr>
+      <td>${i.pessoas?.nome || '-'}</td>
+      <td>${i.pessoas?.cpf || '-'}</td>
+      <td>${i.pessoas?.email || '-'}</td>
+      <td>${i.data_inscricao || '-'}</td>
+      <td>${i.pagamento ? '✅ Pago' : '❌ Pendente'}</td>
+    </tr>;
+  });
+  html += '</table>';
+  document.getElementById('tabela-inscritos').innerHTML = html;
+}
+
+function exibirTabelaAtividades(dados) {
+  if (!dados || dados.length === 0) {
+    document.getElementById('tabela-atividades').innerHTML = '<p>Nenhuma atividade encontrada.</p>';
+    return;
+  }
+
+  let html = '<table><tr><th>Código</th><th>Título</th><th>Tipo</th><th>Premiação</th></tr>';
+  dados.forEach(a => {
+    html += <tr>
+      <td>${a.codigo || '-'}</td>
+      <td>${a.titulo || '-'}</td>
+      <td>${a.tipo || '-'}</td>
+      <td>${a.tem_premiacao ? '🏆 Sim' : '❌ Não'}</td>
+    </tr>;
+  });
+  html += '</table>';
+  document.getElementById('tabela-atividades').innerHTML = html;
+}
+
+function exibirTabelaAlocacoes(dados) {
+  if (!dados || dados.length === 0) {
+    document.getElementById('tabela-alocacoes').innerHTML = '<p>Nenhuma alocação encontrada.</p>';
+    return;
+  }
+
+  let html = '<table><tr><th>Pessoa</th><th>CPF</th><th>Hotel</th><th>Quarto</th></tr>';
+  dados.forEach(a => {
+    html += <tr>
+      <td>${a.pessoas?.nome || '-'}</td>
+      <td>${a.pessoas?.cpf || '-'}</td>
+      <td>${a.hoteis?.nome || '-'}</td>
+      <td>${a.quartos?.numero || '-'}</td>
+    </tr>;
+  });
+  html += '</table>';
+  document.getElementById('tabela-alocacoes').innerHTML = html;
+  }
   // =============================================
   // 4. (OPCIONAL) TESTE AUTOMÁTICO AO CARREGAR
   // =============================================
@@ -169,7 +336,7 @@
   <div id="c-organizacao" class="subpanel">
     <h2>Equipe Organizadora</h2>
     <form id="form-organizacao" class="grid-form">
-      <label>CPF da pessoa <input required name="cpf"></label>
+      <label>CPF da pessoa <input required name="cpf"></label>g
       <label>Data de ingresso <input required type="date" name="data_ingresso"></label>
       <button type="button" onclick="adicionarÀOrganização()">Adicionar à organização</button>
     </form>
@@ -341,6 +508,14 @@
 </section>
 
 </main>
+  // Carrega os dados quando a página abrir
+document.addEventListener('DOMContentLoaded', function() {
+  buscarPessoas();
+  buscarInscritos();
+  buscarAtividades();
+  buscarAlocacoes();
+});
+
 
 <script src="/app.js"></script>
 </body>

@@ -171,7 +171,7 @@
     <form id="form-organizacao" class="grid-form">
       <label>CPF da pessoa <input required name="cpf"></label>
       <label>Data de ingresso <input required type="date" name="data_ingresso"></label>
-      <button type="submit">Adicionar à organização</button>
+      <button type="button" onclick="adicionarÀOrganização()">Adicionar à organização</button>
     </form>
     <div id="msg-organizacao" class="msg"></div>
   </div>
@@ -181,7 +181,7 @@
     <form id="form-apoio" class="grid-form">
       <label>CPF da pessoa <input required name="cpf"></label>
       <label>Data de ingresso <input required type="date" name="data_ingresso"></label>
-      <button type="submit">Adicionar ao apoio</button>
+      <button type="buton" onclick="adicionarAoApoio()">Adicionar ao apoio</button>
     </form>
     <div id="msg-apoio" class="msg"></div>
   </div>
@@ -204,7 +204,7 @@
       <label class="full">Equipe de apoio (marque um ou mais)
         <select multiple name="apoio" id="select-apoio" size="5"></select>
       </label>
-      <button type="submit">Salvar atividade</button>
+      <button type="button" onclick="salvarAtividade()">Salvar atividade</button>
     </form>
     <p class="hint">Segure Ctrl (ou Cmd no Mac) para marcar mais de uma pessoa.</p>
     <div id="msg-atividade" class="msg"></div>
@@ -217,7 +217,7 @@
       <label>Atividade
         <select required name="id_atividade" id="select-atividade-ministrante"></select>
       </label>
-      <button type="submit">Vincular ministrante</button>
+      <button type="button" onclick="vincularMinistrante()">Vincular ministrante</button>
     </form>
     <div id="msg-ministrante" class="msg"></div>
   </div>
@@ -229,7 +229,7 @@
         <select required name="id_atividade" id="select-atividade-presenca"></select>
       </label>
       <label>CPF da pessoa <input required name="cpf"></label>
-      <button type="submit">Confirmar presença</button>
+      <button type="button" onclick="confirmarPrença()">Confirmar presença</button>
     </form>
     <div id="msg-presenca" class="msg"></div>
   </div>
@@ -244,20 +244,20 @@
         <label>Telefone <input name="telefone"></label>
         <label>Nº de quartos <input type="number" min="1" name="numero_quartos"></label>
         <label>Pessoas por quarto <input type="number" min="1" name="pessoas_por_quarto"></label>
-        <button type="submit">Salvar hotel</button>
+        <button type="button" onclick="salvarHotel()">Salvar hotel</button>
       </form>
       <form id="form-quarto" class="grid-form">
         <h3>Novo quarto</h3>
         <label>Hotel <select required name="nome_hotel" id="select-hotel-quarto"></select></label>
         <label>Número do quarto <input required name="quarto"></label>
-        <button type="submit">Adicionar quarto</button>
+        <button type="button" onclick="adicionarQuarto()">Adicionar quarto</button>
       </form>
       <form id="form-alocacao" class="grid-form">
         <h3>Alocar pessoa em quarto</h3>
         <label>CPF da pessoa <input required name="cpf"></label>
         <label>Hotel <select required name="nome_hotel" id="select-hotel-alocacao"></select></label>
         <label>Quarto <select required name="quarto" id="select-quarto-alocacao"></select></label>
-        <button type="submit">Alocar</button>
+        <button type="button" onclick="alocar()">Alocar</button>
       </form>
     </div>
     <div id="msg-hotel" class="msg"></div>
